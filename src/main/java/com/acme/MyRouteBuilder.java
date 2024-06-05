@@ -20,27 +20,25 @@ public class MyRouteBuilder extends RouteBuilder {
                     .log("${body}")
                     .unmarshal().jacksonXml(Person.class)
                     .process(this.myProcessor)
-                    .log("UK message: ${body}")
+                    .log("London message: ${body}")
                     .convertBodyTo(String.class)
-                    // TODO: Send message to RabbitMQ.
-                    .to("???").id("toUK")
-                .otherwise()
-                    .log("${body}")
-                    .unmarshal().jacksonXml(Person.class)
-                    .process(this.myProcessor)
-                    .log("Other message: ${body}")
-                    .convertBodyTo(String.class)
-                    // TODO: Send message to RabbitMQ.
-                    .to("???").id("toOthers")
-            .end()
-        ;
+                    .to("amqp:queue:london?connectionFactory=#connectionFactory").id("toUKQueue")
+                    .log(">>> Message sent to London Queue: ${body}")
+            .otherwise()
+                .log("${body}")
+                .unmarshal().jacksonXml(Person.class)
+                .process(this.myProcessor)
+                .log("Other message: ${body}")
+                .convertBodyTo(String.class)
+                .to("amqp:queue:others?connectionFactory=#connectionFactory").id("toOthersQueue")
+                .log(">>> Message sent to Others Queue: ${body}")
+            .end();
 
-        // TODO: Consume from RabbitMQ
-        from("???").id("fromUK")
-            .log("<<< Received from UK: ${body}");
+    from("amqp:queue:london?connectionFactory=#connectionFactory").id("fromUK")
+        .log("<<< Message received from London: ${body}");
 
-        from("???").id("fromOthers")
-                .log("<<< Received from Others: ${body}");
+    from("amqp:queue:others?connectionFactory=#connectionFactory").id("fromOthers")
+        .log("<<< Message received from Others: ${body}");
     }
 
 }

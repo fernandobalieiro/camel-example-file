@@ -1,6 +1,6 @@
 package com.acme;
 
-import com.rabbitmq.client.ConnectionFactory;
+import org.apache.qpid.jms.JmsConnectionFactory;
 import org.apache.camel.main.Main;
 
 /**
@@ -18,12 +18,10 @@ public class MainApp {
         main.run(args);
     }
 
-    private static ConnectionFactory connectionFactory() {
-        final var connectionFactory = new ConnectionFactory();
-        connectionFactory.setHost("localhost");
-        connectionFactory.setPort(5672);
-        connectionFactory.setUsername("guest");
-        connectionFactory.setPassword("guest");
+    private static JmsConnectionFactory connectionFactory() {
+        final var connectionFactory = new JmsConnectionFactory("amqp://localhost:5672");
+        connectionFactory.setUsername("admin");
+        connectionFactory.setPassword("admin");
         return connectionFactory;
     }
 
