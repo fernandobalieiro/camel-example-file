@@ -7,3 +7,13 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+  artemis:
+    image: apache/activemq-artemis:latest
+    ports:
+      - "5673:5672"
+      - "8161:8161"
+      - "61616:61616"
+    environment:
+      ARTEMIS_USERNAME: admin
+      ARTEMIS_PASSWORD: admin
+      ANONYMOUS_LOGIN: true

@@ -30,14 +30,14 @@ public class MyRouteBuilder extends RouteBuilder {
                 .process(this.myProcessor)
                 .log("Other message: ${body}")
                 .convertBodyTo(String.class)
-                .to("rabbitmq:others?connectionFactory=#connectionFactory").id("toOthersQueue")
+                .to("amqp:others?connectionFactory=#connectionFactoryArtemis").id("toOthersQueue")
                 .log(">>> Message sent to Others Queue: ${body}")
             .end();
 
     from("rabbitmq:london?connectionFactory=#connectionFactory").id("fromLondon")
         .log("<<< Message received from London: ${body}");
 
-    from("rabbitmq:others?connectionFactory=#connectionFactory").id("fromOthers")
+    from("amqp:others?connectionFactory=#connectionFactoryArtemis").id("fromOthers")
         .log("<<< Message received from Others: ${body}");
     }
 
